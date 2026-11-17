@@ -1,0 +1,433 @@
+{
+  "dataset": {
+    "file": "AirQualityData.csv",
+    "rows": 4000,
+    "columns": 23,
+    "features": [
+      "CO(GT)",
+      "NOx(GT)",
+      "NO2(GT)",
+      "O3(GT)",
+      "SO2(GT)",
+      "PM2.5",
+      "PM10",
+      "Temperature",
+      "Humidity",
+      "Pressure",
+      "WindSpeed",
+      "WindDirection",
+      "CO_NOx_Ratio",
+      "NOx_NO2_Ratio",
+      "Temp_Humidity_Index",
+      "CO_MA3",
+      "NO2_MA3",
+      "O3_MA3",
+      "DayOfWeek",
+      "Hour",
+      "Month",
+      "Time"
+    ],
+    "target": "AirQualityIndex",
+    "category_source": "Low / Medium / High terciles of the target",
+    "target_mean": 249.6,
+    "target_max": 499.9,
+    "missing_pct": 1.0,
+    "train_rows": 3200,
+    "test_rows": 800
+  },
+  "regression": {
+    "results": [
+      {
+        "model": "Linear Regression",
+        "r2": -0.01786510749633563,
+        "rmse": 145.37608851634897,
+        "mae": 124.88144215779131,
+        "seconds": 0.3,
+        "cv_r2_mean": -0.011343695887099114,
+        "cv_r2_std": 0.008809952683678627
+      },
+      {
+        "model": "Decision Tree",
+        "r2": -0.39708947362976854,
+        "rmse": 170.31777554727657,
+        "mae": 142.67985138860138,
+        "seconds": 0.1
+      },
+      {
+        "model": "Random Forest",
+        "r2": -0.022523261340956724,
+        "rmse": 145.7083580787221,
+        "mae": 125.57238560724441,
+        "seconds": 2.0
+      },
+      {
+        "model": "Gradient Boosting",
+        "r2": -0.05292172166639153,
+        "rmse": 147.85836812740348,
+        "mae": 126.59748384669808,
+        "seconds": 5.9
+      }
+    ],
+    "best": "Linear Regression"
+  },
+  "classification": {
+    "results": [
+      {
+        "model": "Logistic Regression",
+        "accuracy": 0.34625,
+        "f1": 0.34662679673750346,
+        "seconds": 0.3
+      },
+      {
+        "model": "Decision Tree",
+        "accuracy": 0.3375,
+        "f1": 0.3248164377610063,
+        "seconds": 0.1
+      },
+      {
+        "model": "Random Forest",
+        "accuracy": 0.32625,
+        "f1": 0.32584203149650665,
+        "seconds": 1.0
+      },
+      {
+        "model": "Gradient Boosting",
+        "accuracy": 0.32625,
+        "f1": 0.3259832836888731,
+        "seconds": 8.9
+      }
+    ],
+    "best": "Logistic Regression",
+    "classes": [
+      "High",
+      "Low",
+      "Medium"
+    ]
+  },
+  "feature_importance": [
+    {
+      "feature": "Temperature",
+      "importance": 36.4
+    },
+    {
+      "feature": "Month",
+      "importance": 13.34
+    },
+    {
+      "feature": "Time",
+      "importance": 11.57
+    },
+    {
+      "feature": "CO_MA3",
+      "importance": 9.14
+    },
+    {
+      "feature": "CO_NOx_Ratio",
+      "importance": 9.0
+    },
+    {
+      "feature": "NOx_NO2_Ratio",
+      "importance": 7.77
+    },
+    {
+      "feature": "PM2.5",
+      "importance": 5.89
+    },
+    {
+      "feature": "SO2(GT)",
+      "importance": 3.97
+    },
+    {
+      "feature": "Hour",
+      "importance": 1.64
+    },
+    {
+      "feature": "DayOfWeek",
+      "importance": 0.99
+    },
+    {
+      "feature": "NOx(GT)",
+      "importance": 0.29
+    },
+    {
+      "feature": "CO(GT)",
+      "importance": 0.0
+    },
+    {
+      "feature": "NO2(GT)",
+      "importance": 0.0
+    },
+    {
+      "feature": "O3(GT)",
+      "importance": 0.0
+    },
+    {
+      "feature": "PM10",
+      "importance": 0.0
+    },
+    {
+      "feature": "Humidity",
+      "importance": 0.0
+    },
+    {
+      "feature": "Pressure",
+      "importance": 0.0
+    },
+    {
+      "feature": "WindSpeed",
+      "importance": 0.0
+    },
+    {
+      "feature": "WindDirection",
+      "importance": 0.0
+    },
+    {
+      "feature": "Temp_Humidity_Index",
+      "importance": 0.0
+    },
+    {
+      "feature": "NO2_MA3",
+      "importance": 0.0
+    },
+    {
+      "feature": "O3_MA3",
+      "importance": 0.0
+    }
+  ],
+  "schema": {
+    "numeric": [
+      {
+        "name": "CO(GT)",
+        "min": 0.1,
+        "p05": 0.58,
+        "median": 5.05,
+        "p95": 9.51,
+        "max": 10.0
+      },
+      {
+        "name": "NOx(GT)",
+        "min": 1.01,
+        "p05": 16.65,
+        "median": 146.44,
+        "p95": 283.98,
+        "max": 299.84
+      },
+      {
+        "name": "NO2(GT)",
+        "min": 1.01,
+        "p05": 10.43,
+        "median": 99.51,
+        "p95": 189.05,
+        "max": 199.93
+      },
+      {
+        "name": "O3(GT)",
+        "min": 1.06,
+        "p05": 9.81,
+        "median": 88.96,
+        "p95": 171.32,
+        "max": 179.99
+      },
+      {
+        "name": "SO2(GT)",
+        "min": 1.01,
+        "p05": 3.63,
+        "median": 26.32,
+        "p95": 47.86,
+        "max": 49.99
+      },
+      {
+        "name": "PM2.5",
+        "min": 5.01,
+        "p05": 15.54,
+        "median": 105.5,
+        "p95": 191.13,
+        "max": 199.98
+      },
+      {
+        "name": "PM10",
+        "min": 10.03,
+        "p05": 24.11,
+        "median": 154.71,
+        "p95": 284.74,
+        "max": 299.91
+      },
+      {
+        "name": "Temperature",
+        "min": 0.02,
+        "p05": 1.91,
+        "median": 19.62,
+        "p95": 37.97,
+        "max": 39.99
+      },
+      {
+        "name": "Humidity",
+        "min": 10.0,
+        "p05": 14.22,
+        "median": 55.11,
+        "p95": 94.95,
+        "max": 99.98
+      },
+      {
+        "name": "Pressure",
+        "min": 950.02,
+        "p05": 954.65,
+        "median": 999.86,
+        "p95": 1044.98,
+        "max": 1049.93
+      },
+      {
+        "name": "WindSpeed",
+        "min": 0.0,
+        "p05": 1.05,
+        "median": 9.87,
+        "p95": 19.05,
+        "max": 20.0
+      },
+      {
+        "name": "WindDirection",
+        "min": 0.03,
+        "p05": 18.4,
+        "median": 179.4,
+        "p95": 340.98,
+        "max": 359.98
+      },
+      {
+        "name": "CO_NOx_Ratio",
+        "min": 0.0,
+        "p05": 0.0,
+        "median": 0.03,
+        "p95": 0.29,
+        "max": 4.08
+      },
+      {
+        "name": "NOx_NO2_Ratio",
+        "min": 0.01,
+        "p05": 0.17,
+        "median": 1.47,
+        "p95": 12.54,
+        "max": 131.17
+      },
+      {
+        "name": "Temp_Humidity_Index",
+        "min": 0.01,
+        "p05": 0.78,
+        "median": 8.3,
+        "p95": 28.2,
+        "max": 39.37
+      },
+      {
+        "name": "CO_MA3",
+        "min": 0.61,
+        "p05": 2.2,
+        "median": 5.04,
+        "p95": 7.76,
+        "max": 9.47
+      },
+      {
+        "name": "NO2_MA3",
+        "min": 3.7,
+        "p05": 45.95,
+        "median": 100.13,
+        "p95": 153.15,
+        "max": 190.78
+      },
+      {
+        "name": "O3_MA3",
+        "min": 7.45,
+        "p05": 37.91,
+        "median": 90.45,
+        "p95": 140.53,
+        "max": 173.55
+      },
+      {
+        "name": "Hour",
+        "min": 0.0,
+        "p05": 1.0,
+        "median": 11.0,
+        "p95": 22.0,
+        "max": 23.0
+      }
+    ],
+    "categorical": [
+      {
+        "name": "Time",
+        "choices": [
+          "00:00",
+          "01:00",
+          "02:00",
+          "03:00",
+          "04:00",
+          "05:00",
+          "06:00",
+          "07:00",
+          "08:00",
+          "09:00",
+          "10:00",
+          "11:00",
+          "12:00",
+          "13:00",
+          "14:00",
+          "15:00",
+          "16:00",
+          "17:00",
+          "18:00",
+          "19:00",
+          "20:00",
+          "21:00",
+          "22:00",
+          "23:00"
+        ],
+        "default": "00:00"
+      }
+    ],
+    "has_month": true
+  },
+  "charts": [
+    {
+      "file": "eda_target_distribution.png",
+      "title": "Distribution of AirQualityIndex",
+      "caption": "Most records fall in the lower bands; the long right tail is the severe-pollution days."
+    },
+    {
+      "file": "eda_correlation.png",
+      "title": "Correlation heatmap",
+      "caption": "Particulate matter (PM2.5, PM10) shows the strongest link with the target."
+    },
+    {
+      "file": "eda_monthly.png",
+      "title": "Seasonal pattern",
+      "caption": "Pollution peaks in the cooler months and drops during the monsoon."
+    },
+    {
+      "file": "eda_by_category.png",
+      "title": "Average AirQualityIndex by Time",
+      "caption": "Compares the most polluted values of Time."
+    },
+    {
+      "file": "reg_model_comparison.png",
+      "title": "Regression model comparison",
+      "caption": "Linear Regression gives the best R\u00b2 on the 20% held-out test set."
+    },
+    {
+      "file": "reg_actual_vs_predicted.png",
+      "title": "Actual vs predicted",
+      "caption": "Points close to the dashed line are accurate predictions."
+    },
+    {
+      "file": "feature_importance.png",
+      "title": "Feature importance",
+      "caption": "The pollutants at the top influence the predicted value the most."
+    },
+    {
+      "file": "cls_confusion_matrix.png",
+      "title": "Confusion matrix",
+      "caption": "Most errors are between neighbouring categories."
+    },
+    {
+      "file": "cls_model_comparison.png",
+      "title": "Classification model comparison",
+      "caption": "Logistic Regression gives the best weighted F1 score."
+    }
+  ]
+}
