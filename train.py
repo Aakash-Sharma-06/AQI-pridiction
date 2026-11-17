@@ -1,18 +1,3 @@
-#!/usr/bin/env python3
-"""
-Air Quality Prediction - training pipeline
-==========================================
-Usage:
-    python train.py --data data/AirQualityData.csv
-    python train.py --data data/AirQualityData.csv --target AQI      (override auto-detection)
-
-What it does
-  1. Loads and cleans the data (dates, negative readings, missing values)
-  2. Creates exploratory charts (static/charts/*.png)
-  3. Trains and compares REGRESSION models  -> predicts the AQI value
-  4. Trains and compares CLASSIFICATION models -> predicts the AQI category
-  5. Saves the best of each (models/*.joblib) and everything the web app needs (models/metrics.json)
-"""
 import argparse
 import json
 import os
@@ -26,20 +11,20 @@ import numpy as np
 import pandas as pd
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-from sklearn.base import clone  # noqa: E402
-from sklearn.compose import ColumnTransformer  # noqa: E402
-from sklearn.ensemble import (GradientBoostingRegressor, HistGradientBoostingClassifier,  # noqa: E402
+import matplotlib.pyplot as plt
+from sklearn.base import clone
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import (GradientBoostingRegressor, HistGradientBoostingClassifier,
                               RandomForestClassifier, RandomForestRegressor)
-from sklearn.impute import SimpleImputer  # noqa: E402
-from sklearn.inspection import permutation_importance  # noqa: E402
-from sklearn.linear_model import LinearRegression, LogisticRegression  # noqa: E402
-from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score, mean_absolute_error,  # noqa: E402
+from sklearn.impute import SimpleImputer
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score, mean_absolute_error,
                              mean_squared_error, r2_score)
-from sklearn.model_selection import cross_val_score, train_test_split  # noqa: E402
-from sklearn.pipeline import Pipeline  # noqa: E402
-from sklearn.preprocessing import OneHotEncoder, StandardScaler  # noqa: E402
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor  # noqa: E402
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 warnings.filterwarnings("ignore")
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -47,13 +32,11 @@ CHART_DIR = os.path.join(BASE, "static", "charts")
 MODEL_DIR = os.path.join(BASE, "models")
 RANDOM_STATE = 42
 
-# CPCB (India) AQI categories
 AQI_BINS = [-np.inf, 50, 100, 200, 300, 400, np.inf]
 AQI_LABELS = ["Good", "Satisfactory", "Moderate", "Poor", "Very Poor", "Severe"]
 PALETTE = "#0f6b6b"
 
 
-# --------------------------------------------------------------------------- helpers
 def norm(s):
     return str(s).lower().replace(" ", "").replace("_", "").replace(".", "")
 
@@ -90,7 +73,6 @@ def rmse(y, p):
     return float(np.sqrt(mean_squared_error(y, p)))
 
 
-# --------------------------------------------------------------------------- 1. load + clean
 def load_and_prepare(path, target_arg):
     df = pd.read_csv(path)
     df.columns = [c.strip() for c in df.columns]
@@ -108,7 +90,6 @@ def load_and_prepare(path, target_arg):
     df = df.dropna(subset=[target]).reset_index(drop=True)
     print(f"Regression target: {target}   |   category column: {bucket}   |   date column: {date_col}")
 
-    # classification target
     if bucket:
         cls_source = f"dataset column '{bucket}'"
         y_cls = df[bucket].astype(str).str.strip().replace({"nan": np.nan, "": np.nan})
@@ -119,11 +100,10 @@ def load_and_prepare(path, target_arg):
         cls_source = "Low / Medium / High terciles of the target"
         y_cls = pd.qcut(df[target], 3, labels=["Low", "Medium", "High"]).astype(str)
 
-    # features
     drop = {c for c in [target, bucket, date_col] if c}
     X = df.drop(columns=list(drop))
     X = X[[c for c in X.columns if not norm(c).startswith("unnamed")]]
-    if target_is_aqi:  # never leak another AQI-like column
+    if target_is_aqi:
         X = X[[c for c in X.columns if "aqi" not in norm(c)]]
 
     if date_col:
@@ -135,7 +115,7 @@ def load_and_prepare(path, target_arg):
     num_cols = [c for c in X.columns if pd.api.types.is_numeric_dtype(X[c])]
     cat_cols = [c for c in X.columns if c not in num_cols and 1 < X[c].nunique() <= 60]
     X = X[num_cols + cat_cols]
-    for c in num_cols:  # negative pollutant readings are sensor errors
+    for c in num_cols:
         if c not in ("Month", "DayOfWeek"):
             X.loc[X[c] < 0, c] = np.nan
     keep_num = [c for c in num_cols if X[c].isna().mean() < 0.7 and X[c].nunique() > 1]
@@ -145,7 +125,6 @@ def load_and_prepare(path, target_arg):
     return df, X, y_cls, target, bucket, date_col, num_cols, cat_cols, cls_source
 
 
-# --------------------------------------------------------------------------- 2. EDA
 def make_eda_charts(df, X, target, num_cols, cat_cols):
     charts = []
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -185,7 +164,6 @@ def make_eda_charts(df, X, target, num_cols, cat_cols):
     return charts
 
 
-# --------------------------------------------------------------------------- 3. regression
 def run_regression(Xtr, Xte, ytr, yte, num_cols, cat_cols):
     models = {
         "Linear Regression": LinearRegression(),
@@ -209,7 +187,6 @@ def run_regression(Xtr, Xte, ytr, yte, num_cols, cat_cols):
     return results, fitted
 
 
-# --------------------------------------------------------------------------- 4. classification
 def run_classification(Xtr, Xte, ytr, yte, num_cols, cat_cols):
     models = {
         "Logistic Regression": LogisticRegression(max_iter=2000),
@@ -233,7 +210,6 @@ def run_classification(Xtr, Xte, ytr, yte, num_cols, cat_cols):
     return results, fitted
 
 
-# --------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=os.path.join(BASE, "data", "AirQualityData.csv"))
@@ -247,7 +223,6 @@ def main():
     y_reg = df[target]
     charts = make_eda_charts(df, X, target, num_cols, cat_cols)
 
-    # ---- regression
     print("\nRegression models (predict", target + ")")
     Xtr, Xte, ytr, yte = train_test_split(X, y_reg, test_size=0.2, random_state=RANDOM_STATE)
     reg_results, reg_fit = run_regression(Xtr, Xte, ytr, yte, num_cols, cat_cols)
@@ -272,7 +247,6 @@ def main():
     charts.append((save_fig(fig, "reg_actual_vs_predicted.png"), "Actual vs predicted",
                    "Points close to the dashed line are accurate predictions."))
 
-    # permutation importance on raw columns
     idx = np.random.RandomState(RANDOM_STATE).choice(len(Xte), size=min(2000, len(Xte)), replace=False)
     imp = permutation_importance(pipe_reg, Xte.iloc[idx], yte.iloc[idx], n_repeats=5,
                                  random_state=RANDOM_STATE, n_jobs=1)
@@ -287,7 +261,6 @@ def main():
     charts.append((save_fig(fig, "feature_importance.png"), "Feature importance",
                    "The pollutants at the top influence the predicted value the most."))
 
-    # ---- classification
     print("\nClassification models (predict category)")
     mask = y_cls.notna()
     Xc, yc = X[mask], y_cls[mask]
@@ -322,7 +295,6 @@ def main():
     joblib.dump(pipe_reg, os.path.join(MODEL_DIR, "regressor.joblib"), compress=3)
     joblib.dump(pipe_cls, os.path.join(MODEL_DIR, "classifier.joblib"), compress=3)
 
-    # ---- schema for the web form
     ui_num = [c for c in num_cols if c not in ("Month", "DayOfWeek")]
     schema = {"numeric": [], "categorical": [], "has_month": "Month" in X.columns}
     for c in ui_num:

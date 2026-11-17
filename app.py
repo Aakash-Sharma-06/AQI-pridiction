@@ -1,4 +1,3 @@
-"""Flask web app: serves the HTML/CSS/JS frontend and a small JSON API around the trained models."""
 import json
 import os
 
